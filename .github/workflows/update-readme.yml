@@ -1,0 +1,31 @@
+name: Update README
+
+on:
+  push:
+    branches: [main]
+    paths: [llm-shell.py]   # only runs when the TUI source changes
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python3 scripts/gen_readme.py
+
+      - name: Commit if README changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet README.md || (
+            git add README.md &&
+            git commit -m "docs: auto-update README from llm-shell.py [skip ci]"  &&
+            git push
+          )
