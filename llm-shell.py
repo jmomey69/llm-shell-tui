@@ -30,6 +30,7 @@ from textual.widgets import (
     Label,
     Log,
     RichLog,
+    Rule,
     Select,
     Static,
     TabbedContent,
@@ -117,9 +118,8 @@ class ServerTab(Vertical):
 
     def compose(self) -> ComposeResult:
         with Horizontal(id="server-status-row"):
-            yield Label("Status:", id="status-label")
+            yield Label("SERVICE", id="status-label")
             yield Label("...", id="status-value")
-            yield Label("Auto-start:", id="enabled-label")
             yield Label("...", id="enabled-value")
         with Horizontal(id="server-btns"):
             yield Button("Start",   variant="success", id="btn-start")
@@ -127,7 +127,8 @@ class ServerTab(Vertical):
             yield Button("Restart", variant="warning",  id="btn-restart")
             yield Button("Enable auto-start",  variant="primary", id="btn-enable")
             yield Button("Disable auto-start", variant="default", id="btn-disable")
-        yield Label("Live logs (last 80 lines):", classes="section-title")
+        yield Rule(line_style="heavy")
+        yield Label("Live logs", classes="section-title")
         yield RichLog(id="server-log", highlight=True, markup=True, max_lines=200)
         with Horizontal(id="server-config-row"):
             yield Label("Port:", classes="cfg-label")
@@ -193,10 +194,10 @@ class ServerTab(Vertical):
         self.active  = active
         self.enabled = enabled
         self.query_one("#status-value",  Label).update(
-            "[green]active[/]" if active else "[red]inactive[/]"
+            "[bold green]● active[/]" if active else "[bold red]○ inactive[/]"
         )
         self.query_one("#enabled-value", Label).update(
-            "[green]enabled[/]" if enabled else "[dim]disabled[/]"
+            "[bold green]● auto-start on[/]" if enabled else "[dim]○ auto-start off[/]"
         )
 
 
@@ -285,7 +286,7 @@ class ConvertTab(Vertical):
                 value="Q4_K_M", id="sel-quant",
             )
         yield Button("Quantize", variant="success", id="btn-quantize")
-        yield Label("─" * 60)
+        yield Rule()
         yield Label("Convert HuggingFace model → GGUF", classes="section-title")
         with Horizontal(classes="form-row"):
             yield Label("HF model dir:", classes="form-label")
@@ -386,7 +387,8 @@ class RunTab(Vertical):
             yield Button("Start",       variant="success", id="btn-run-start")
             yield Button("Stop",        variant="error",   id="btn-run-stop")
             yield Button("Auto Config", variant="warning", id="btn-run-auto")
-        yield Label("Server output:", classes="section-title")
+        yield Rule()
+        yield Label("Server output", classes="section-title")
         yield Log(id="run-log", max_lines=500)
 
     @on(Button.Pressed, "#btn-run-start")
@@ -828,46 +830,184 @@ class ModelFinderTab(Vertical):
 # ── Main App ─────────────────────────────────────────────────────────────────────
 
 CSS = """
-Screen { background: $surface; }
-Header { background: $primary; color: $text; }
-
-#server-status-row, #server-btns, #server-config-row,
-#model-btns, #run-btns { height: auto; margin: 1 0; }
-
-.section-title { margin: 1 0 0 0; color: $accent; text-style: bold; }
-.form-row { height: auto; margin: 0 0 1 0; align: left middle; }
-.form-label { width: 16; }
-.form-input { width: 40; }
-.form-input-sm { width: 10; }
-.cfg-label { width: 12; }
-.cfg-input { width: 10; }
-
-#server-log, #model-log, #convert-log, #run-log {
-    height: 1fr; min-height: 10; border: solid $primary-darken-2;
-    background: $surface-darken-2;
+/* ── Global ─────────────────────────────────────────────────────────── */
+Screen {
+    background: #0d1117;
+    color: #c9d1d9;
 }
 
-#models-table { height: 1fr; min-height: 8; }
+Header {
+    background: #161b22;
+    color: #58a6ff;
+    text-style: bold;
+}
 
+Footer {
+    background: #161b22;
+    color: #7d8590;
+}
+
+TabPane {
+    padding: 1 2;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────── */
+Tabs {
+    background: #161b22;
+}
+
+Tab {
+    color: #7d8590;
+}
+
+Tab.-active {
+    color: #e6edf3;
+    text-style: bold;
+}
+
+/* ── Server status row ──────────────────────────────────────────────── */
+#server-status-row {
+    height: 3;
+    background: #161b22;
+    border: round #30363d;
+    padding: 0 2;
+    margin-bottom: 1;
+    align: left middle;
+}
+
+#status-label {
+    color: #7d8590;
+    text-style: bold;
+    width: 10;
+    margin-right: 1;
+}
+
+#status-value {
+    margin-right: 4;
+    text-style: bold;
+    min-width: 16;
+}
+
+#enabled-value {
+    text-style: bold;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+Button {
+    margin: 0 1 0 0;
+}
+
+#server-btns, #model-btns, #run-btns, #finder-btns {
+    height: auto;
+    margin: 1 0;
+}
+
+/* ── Section titles ──────────────────────────────────────────────────── */
+.section-title {
+    color: #58a6ff;
+    text-style: bold;
+    margin: 0 0 0 0;
+    padding: 0;
+}
+
+Rule {
+    color: #30363d;
+    margin: 1 0;
+}
+
+/* ── Form rows ───────────────────────────────────────────────────────── */
+.form-row {
+    height: auto;
+    margin: 0 0 1 0;
+    align: left middle;
+}
+
+.form-label {
+    width: 16;
+    color: #7d8590;
+}
+
+.form-input     { width: 40; }
+.form-input-sm  { width: 10; }
+.cfg-label      { width: 12; color: #7d8590; }
+.cfg-input      { width: 10; }
+
+/* ── Server config row ───────────────────────────────────────────────── */
+#server-config-row {
+    height: auto;
+    margin-top: 1;
+    background: #161b22;
+    border: round #30363d;
+    padding: 0 1;
+    align: left middle;
+}
+
+/* ── Log / output areas ──────────────────────────────────────────────── */
+#server-log, #run-log, #model-log, #convert-log {
+    border: round #30363d;
+    background: #010409;
+    min-height: 10;
+}
+
+#server-log, #run-log, #convert-log { height: 1fr; }
+#model-log { height: 8; }
+
+/* ── Tables ──────────────────────────────────────────────────────────── */
+#models-table {
+    height: 1fr;
+    min-height: 8;
+    border: round #30363d;
+}
+
+#finder-table {
+    height: 1fr;
+    min-height: 10;
+    border: round #30363d;
+}
+
+/* ── Model Finder ────────────────────────────────────────────────────── */
+#hw-banner {
+    background: #161b22;
+    border: round #1f6feb;
+    padding: 1 2;
+    margin-bottom: 1;
+    text-align: center;
+    color: #58a6ff;
+    text-style: bold;
+}
+
+#finder-controls {
+    height: auto;
+    margin-bottom: 1;
+    align: left middle;
+}
+
+#finder-btns  { height: auto; margin: 1 0; }
+
+#finder-log {
+    height: 8;
+    border: round #30363d;
+    background: #010409;
+}
+
+/* ── Confirm dialog ──────────────────────────────────────────────────── */
 #dialog {
-    width: 60; height: auto; padding: 2 4;
-    background: $surface; border: solid $primary;
+    width: 60;
+    height: auto;
+    padding: 2 4;
+    background: #161b22;
+    border: round #f85149;
     align: center middle;
 }
-#dialog-msg { margin-bottom: 2; text-align: center; }
-#dialog-btns { align: center middle; height: auto; }
-#dialog-btns Button { margin: 0 2; }
 
-Button { margin: 0 1; }
-
-#hw-banner {
-    background: $primary-darken-3; padding: 1 2; margin-bottom: 1;
-    text-align: center; color: $text;
+#dialog-msg {
+    margin-bottom: 2;
+    text-align: center;
+    color: #e6edf3;
 }
-#finder-controls { height: auto; margin-bottom: 1; align: left middle; }
-#finder-table { height: 1fr; min-height: 10; }
-#finder-btns { height: auto; margin: 1 0; }
-#finder-log { height: 8; border: solid $primary-darken-2; background: $surface-darken-2; }
+
+#dialog-btns            { align: center middle; height: auto; }
+#dialog-btns Button     { margin: 0 2; }
 """
 
 

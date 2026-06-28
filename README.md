@@ -9,10 +9,10 @@ Built with [Textual](https://textual.textualize.io/).
 <!-- AUTO:tabs -->
 | Tab | Sections | Buttons | Description |
 |-----|----------|---------|-------------|
-| **Server** | `Live logs (last 80 lines):` | **Start**, **Stop**, **Restart**, **Enable auto-start**, **Disable auto-start** | Start/stop/restart the `llama-server` systemd user service; tail live logs; edit port, context size, and GPU/CPU layer counts before restarting |
+| **Server** | `Live logs` | **Start**, **Stop**, **Restart**, **Enable auto-start**, **Disable auto-start** | Start/stop/restart the `llama-server` systemd user service; tail live logs; edit port, context size, and GPU/CPU layer counts before restarting |
 | **Model Finder** | — | **Refresh**, **Open on HuggingFace ↗**, **Download (hf-cli)**, **Copy ollama pull cmd** | Browse GGUF models on HuggingFace filtered by VRAM budget, open on HF, or copy an `ollama pull` command |
 | **Models** | `GGUF models in ~/` | **Refresh**, **Launch server with selected**, **Delete selected** | List every `.gguf` in `~/`, show size and estimated VRAM fit, launch directly or delete |
-| **Run (direct)** | `Launch server directly (foreground, MTP speculative decoding)`, `Server output:` | **Start**, **Stop**, **Auto Config** | Launch `llama-server` in the foreground without systemd; **Auto Config** reads model metadata and your GPU's free VRAM to suggest optimal GPU/CPU layer split and context length |
+| **Run (direct)** | `Launch server directly (foreground, MTP speculative decoding)`, `Server output` | **Start**, **Stop**, **Auto Config** | Launch `llama-server` in the foreground without systemd; **Auto Config** reads model metadata and your GPU's free VRAM to suggest optimal GPU/CPU layer split and context length |
 | **Convert / Quantize** | `Quantize a GGUF model`, `Convert HuggingFace model → GGUF`, `Output:` | **Quantize**, **Convert to GGUF** | Quantize any GGUF to a smaller quant type; convert a HuggingFace checkpoint to GGUF |
 <!-- /AUTO:tabs -->
 
